@@ -1,0 +1,29 @@
+services:
+  # Back-End
+  back:
+    image: python:3
+    working_dir: /app
+    command: bash -c "pip3 install -r requirements.txt && python3 app.py"
+    volumes:
+      - ./back:/app
+    environment:
+      STRIPE_API_KEY: put-stripe-api-key-here
+
+  # Front-End
+  front:
+    image: node:22
+    working_dir: /app
+    command: bash -c "npm install && npm run dev -- --host"
+    volumes:
+      - ./front:/app
+
+  # Reverse Proxy
+  nginx:
+    image: nginx:latest
+    ports:
+      - 9000:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - back
+      - front
