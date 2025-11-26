@@ -1,9 +1,8 @@
-import time
-import hashlib
+from datetime import date
 import string
 import random
-from datetime import date
 from flask import jsonify, Blueprint, request
+import secrets # Import the secrets module
 
 from database.init import db
 from api.rooms.rooms_models import Room
@@ -90,9 +89,8 @@ def new_booking():
     # Generate random booking reference
     booking_reference = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 
-    # Generate random confirmation secret
-    random_string = str(time.time()) # get current timestamp
-    checkout_confirmation_secret = hashlib.sha512(random_string.encode('utf-8')).hexdigest() # hash it with safe sha512
+    # Generate random confirmation secret using cryptographically secure method
+    checkout_confirmation_secret = secrets.token_hex(32) # Generates a random 64-character hex string
 
     # Create Stripe checkout session
     checkout_session = create_checkout(
