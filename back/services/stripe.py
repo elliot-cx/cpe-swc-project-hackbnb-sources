@@ -1,6 +1,7 @@
 import os
 import stripe
 import requests
+import re
 
 def create_checkout(reference, name, unit_price, quantity, confirmation_secret):
     """
@@ -28,6 +29,10 @@ def create_checkout(reference, name, unit_price, quantity, confirmation_secret):
     )
 
 def get_checkout_lines(checkout_session_id):
+    # Validate checkout_session_id with regex to prevent SSRF
+    if not re.match(r"^cs_(test|live)_[a-zA-Z0-9]{24,}$", checkout_session_id):
+        raise ValueError("Invalid Stripe checkout session ID format.")
+
     url = f"https://api.stripe.com/v1/checkout/sessions/{checkout_session_id}/line_items"
 
     session = requests.Session()
