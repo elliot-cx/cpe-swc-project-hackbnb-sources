@@ -33,6 +33,16 @@ app.register_blueprint(bookings_api, url_prefix='/bookings')
 app.register_blueprint(uploads_api, url_prefix='/uploads')
 
 
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; object-src 'none'"
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
+
+
 @app.route('/', methods=['GET'])
 def welcome():
    return "Welcome on API"
