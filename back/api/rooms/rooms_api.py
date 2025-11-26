@@ -15,7 +15,8 @@ def list_rooms():
 
    if "category" in request.args:
       category = request.args["category"]
-      rooms = Room.query.filter(text(f"category = '{category}'")).all()
+      # patch de l'injection SQL
+      rooms = Room.query.filter_by(category = category).all()
    else:
       rooms = Room.query.all()
 
